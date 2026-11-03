@@ -14,7 +14,8 @@
             NumberOfPages = numberOfPages;
             Genre = genre;
         }
-        public Book(string title, string author, int numberOfPages) : this(title, author, numberOfPages, "Без жанра") { }
+        public Book(string title, string author, int numberOfPages) 
+            : this(title, author, numberOfPages, "Без жанра") { }
 
     }
 }

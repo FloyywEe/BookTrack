@@ -8,43 +8,49 @@ namespace BookTrack
 {
     internal class Library
     {
-        private List<Book> books;
+        private List<Book> _books;
         
         public Library()
         {
-            books = new List<Book>();
+            _books = new List<Book>();
         }
 
-        public void AddBook(Book book)
+        public void AddBook(Book book)  
         {
-            books.Add(book);
+            _books.Add(book);
         }
 
-
-        public bool RemoveBook(int idx)
+        public bool RemoveBook(int number)
         {
-            if(books.Count < idx || idx <= 0) return false;
-            books.RemoveAt(idx - 1);
+            if (_books.Count < number || number <= 0)
+                return false;
+
+            _books.RemoveAt(number - 1);
+
             return true;
         }
         public bool RemoveBook(string title)
         {
-            if (books.Any(x => (x.Title == title)))
-            {
-                books.Remove(books.First(x => x.Title == title));
-                return true;
-            }
-            else return false;
+            var book = _books.FirstOrDefault(x => x.Title == title);
+
+            if (book == null)
+                return false;
+                
+            _books.Remove(book);
+
+            return true;
         }
 
         public void Sort()
         {
-            books = books.OrderBy(x => x.Author).ToList();
+            _books.Sort((x, y) =>
+                string.Compare(x.Author, y.Author, StringComparison.OrdinalIgnoreCase));
         }
 
         public void SortDescending()
         {
-            books = books.OrderByDescending(x => x.Author).ToList();
+            _books.Sort((x, y) =>
+                string.Compare(y.Author, x.Author, StringComparison.OrdinalIgnoreCase));
         }
 
         public void ShowList()
@@ -54,9 +60,9 @@ namespace BookTrack
             Console.WriteLine($"{"№",-4} {"Название",-35} {"Автор",-25} {"Жанр",-25} {"Страниц",-10}");
             Console.WriteLine(new string('-', 105));
 
-            for (int i = 0; i < books.Count; i++)
+            for (int i = 0; i < _books.Count; i++)
             {
-                Console.WriteLine($"{i + 1, -4} {books[i].Title, -35} {books[i].Author, -25} {books[i].Genre, -25} {books[i].NumberOfPages, -10}");
+                Console.WriteLine($"{i + 1,-4} {_books[i].Title,-35} {_books[i].Author,-25} {_books[i].Genre,-25} {_books[i].NumberOfPages,-10}");
             }
         }
     }

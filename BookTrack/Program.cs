@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 
 namespace BookTrack
 {
@@ -83,26 +81,16 @@ namespace BookTrack
                             Console.WriteLine("Номер книги введен в неверном формате\n");
                             break;
                         }
-                        if (library.RemoveBook(idx))
-                        {
-                            Console.WriteLine("Книга успешно удалена\n");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Книгу не удалось удалить\n");
-                        }
+                        Console.WriteLine(library.RemoveBook(idx) 
+                            ? "Книга успешно удалена\n" 
+                            : "Книгу не удалось удалить\n");
                             break;
                     case 3:
                         Console.Write("Введите название книги, которую хотите удалить: ");
                         title = Console.ReadLine();
-                        if (library.RemoveBook(title))
-                        {
-                            Console.WriteLine("Книга успешно удалена\n");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Книгу не удалось удалить\n");
-                        }
+                        Console.WriteLine(library.RemoveBook(title) 
+                            ? "Книга успешно удалена\n" 
+                            : "Книгу не удалось удалить\n");
                         break;
                     case 4:
                         library.Sort();
