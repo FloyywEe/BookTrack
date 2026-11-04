@@ -8,200 +8,136 @@ namespace BookTrack
 {
     internal class Library
     {
-        private List<Book> _books;
-        private List<Magazine> _magazines;
-        private List<Comic> _comics;
+        private List<ILibraryItem> _library;
+        public enum ItemType {Book, Magazine, Comic}
         
         public Library()
         {
-            _books = new List<Book>();
-            _magazines = new List<Magazine>();
-            _comics = new List<Comic>();
+            _library = new List<ILibraryItem>();
         }
 
-        public void AddBook(Book book)  
+        public void AddItem(ILibraryItem item)
         {
-            _books.Add(book);
+            _library.Add(item);
         }
 
-        public bool RemoveBook(int number)
+        public bool RemoveItem(string title, ItemType type)
         {
-            if (_books.Count < number || number <= 0)
+            if (type != ItemType.Book && type != ItemType.Magazine && type != ItemType.Comic)
                 return false;
 
-            _books.RemoveAt(number - 1);
+            ILibraryItem item = _library.FirstOrDefault(x => x.Title == title && IsItemOfType(type, x));
+
+            if (item == null)
+                return false;
+
+            _library.Remove(item);
+
+            return true;            
+        }
+
+        public bool RemoveItem(int number, ItemType type)
+        {
+            if(type != ItemType.Book && type != ItemType.Magazine && type != ItemType.Comic)
+                return false;
+
+            int countItem = _library.Count(x => IsItemOfType(type, x));
+
+
+            if (countItem < number || number <= 0)
+                return false;
+
+            int removeNumber, itemNumber;
+
+            for(removeNumber = 0, itemNumber = 0; itemNumber < number; removeNumber++)
+            {
+                if (IsItemOfType(type, _library[removeNumber]))
+                    itemNumber++;
+            }
+
+            _library.RemoveAt(removeNumber - 1);
 
             return true;
         }
-        public bool RemoveBook(string title)
+
+        public void Sort(bool sortDescending)
         {
-            var book = _books.FirstOrDefault(x => x.Title == title);
 
-            if (book == null)
-                return false;
-                
-            _books.Remove(book);
+            List<ILibraryItem> books = sortDescending
+                ? _library.OfType<Book>().OrderByDescending(x => x.Author).ThenByDescending(x => x.Title).Cast<ILibraryItem>().ToList()
+                : _library.OfType<Book>().OrderBy(x => x.Author).ThenBy(x => x.Title).Cast<ILibraryItem>().ToList();
 
-            return true;
+            List<ILibraryItem> magazines = sortDescending
+                ? _library.OfType<Magazine>().OrderByDescending(x => x.ReleaseDate).ThenByDescending(x => x.Title).Cast<ILibraryItem>().ToList()
+                : _library.OfType<Magazine>().OrderBy(x => x.ReleaseDate).ThenBy(x => x.Title).Cast<ILibraryItem>().ToList();
+
+            List<ILibraryItem> comics = sortDescending
+                ? _library.OfType<Comic>().OrderByDescending(x => x.Illustrator).ThenByDescending(x => x.Title).Cast<ILibraryItem>().ToList()
+                : _library.OfType<Comic>().OrderBy(x => x.Illustrator).ThenBy(x => x.Title).Cast<ILibraryItem>().ToList();
+
+            _library = books.Concat(magazines.Concat(comics)).ToList();
         }
 
-        public void Sort()
+        public void ShowList(ItemType type)
         {
-            _books.Sort((x, y) =>
+            switch (type)
             {
-                int compareResult = string.Compare(x.Author, y.Author, StringComparison.OrdinalIgnoreCase);
+                case ItemType.Book:
+                    Console.WriteLine("Список книг:\n");
+                    Console.WriteLine($"{"№",-4} {"Название",-35} {"Автор",-25} {"Жанр",-25} {"Страниц",-10} {"ISBN",-20}");
+                    Console.WriteLine(new string('-', 125));
 
-                if (compareResult != 0)
-                    return compareResult;
+                    for (int i = 0, j = 0; i < _library.Count; i++)
+                    {
+                        if (!(_library[i] is Book))
+                            continue;
 
-                return string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase);
-            });
+                        Console.WriteLine($"{j + 1,-4} {_library[i].Info()}");
+                        j++;
+                    }
 
-            _magazines.Sort((x, y) =>
-            {
-                int compareResult = DateTime.Compare(x.ReleaseDate, y.ReleaseDate);
+                    break;
+                case ItemType.Magazine:
+                    Console.WriteLine("Список журналов:\n");
+                    Console.WriteLine($"{"№",-4} {"Наименование",-35} {"Номер выпуска",-25} {"Дата выхода",-10}");
+                    Console.WriteLine(new string('-', 90));
 
-                if (compareResult != 0)
-                    return compareResult;
+                    for (int i = 0, j = 0; i < _library.Count; i++)
+                    {
+                        if (!(_library[i] is Magazine))
+                            continue;
 
-                return string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase);
-            });
+                        Console.WriteLine($"{j + 1,-4} {_library[i].Info()}");
+                        j++;
+                    }
 
-            _comics.Sort((x, y) =>
-            {
-                int compareResult = string.Compare(x.Illustrator, y.Illustrator, StringComparison.OrdinalIgnoreCase);
+                    break;
+                case ItemType.Comic:
+                    Console.WriteLine("Список комиксов:\n");
+                    Console.WriteLine($"{"№",-4} {"Наименование",-35} {"Иллюстратор",-25} {"Номер",-25}");
+                    Console.WriteLine(new string('-', 105));
 
-                if (compareResult != 0)
-                    return compareResult;
+                    for (int i = 0, j = 0; i < _library.Count; i++)
+                    {
+                        if (!(_library[i] is Comic))
+                            continue;
 
-                return string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase);
-            });
-        }
+                        Console.WriteLine($"{j + 1,-4} {_library[i].Info()}");
+                        j++;
+                    }
 
-        public void SortDescending()
-        {
-            _books.Sort((x, y) =>
-            {
-                int compareResult = string.Compare(y.Author, x.Author, StringComparison.OrdinalIgnoreCase);
-
-                if (compareResult != 0)
-                    return compareResult;
-
-                return string.Compare(y.Title, x.Title, StringComparison.OrdinalIgnoreCase);
-            });
-
-            _magazines.Sort((x, y) =>
-            {
-                int compareResult = DateTime.Compare(y.ReleaseDate, x.ReleaseDate);
-
-                if (compareResult != 0)
-                    return compareResult;
-
-                return string.Compare(y.Title, x.Title, StringComparison.OrdinalIgnoreCase);
-            });
-
-            _comics.Sort((x, y) =>
-            {
-                int compareResult = string.Compare(y.Illustrator, x.Illustrator, StringComparison.OrdinalIgnoreCase);
-
-                if (compareResult != 0)
-                    return compareResult;
-
-                return string.Compare(y.Title, x.Title, StringComparison.OrdinalIgnoreCase);
-            });
-        }
-
-        public void ShowBookList()
-        {
-            Console.WriteLine("Список книг:\n");
-
-            Console.WriteLine($"{"№",-4} {"Название",-35} {"Автор",-25} {"Жанр",-25} {"Страниц",-10} {"ISBN",-20}");
-            Console.WriteLine(new string('-', 125));
-
-            for (int i = 0; i < _books.Count; i++)
-            {
-                Console.WriteLine($"{i + 1,-4} {_books[i].Title,-35} {_books[i].Author,-25} {_books[i].Genre,-25} {_books[i].NumberOfPages,-10} {_books[i].ISBN,-20}");
+                    break;
+                default:
+                    Console.WriteLine("Некорректное значение ItemType");
+                    break;
             }
         }
 
-        public void AddMagazine(Magazine magazine)
+        private bool IsItemOfType(ItemType type, ILibraryItem item)
         {
-            _magazines.Add(magazine);
-        }
-
-        public bool RemoveMagazine(int number)
-        {
-            if (_magazines.Count < number || number <= 0)
-                return false;
-
-            _magazines.RemoveAt(number - 1);
-
-            return true;
-        }
-
-        public bool RemoveMagazine(string title)
-        {
-            var magazine = _magazines.FirstOrDefault(x => x.Title == title);
-
-            if (magazine == null)
-                return false;
-
-            _magazines.Remove(magazine);
-
-            return true;
-        }
-
-        public void ShowMagazineList()
-        {
-            Console.WriteLine("Список журналов:\n");
-
-            Console.WriteLine($"{"№",-4} {"Наименование",-35} {"Номер выпуска",-25} {"Дата выхода",-10}");
-            Console.WriteLine(new string('-', 90));
-
-            for (int i = 0; i < _magazines.Count; i++)
-            {
-                Console.WriteLine($"{i + 1,-4} {_magazines[i].Title,-35} {_magazines[i].IssueNumber,-25} {_magazines[i].ReleaseDate.ToString("dd.MM.yyyy"),-10}");
-            }
-        }
-
-        public void AddComic(Comic comic)
-        {
-            _comics.Add(comic);
-        }
-
-        public bool RemoveComic(int number)
-        {
-            if (_comics.Count < number || number <= 0)
-                return false;
-
-            _comics.RemoveAt(number - 1);
-
-            return true;
-        }
-
-        public bool RemoveComic(string title)
-        {
-            var comic = _comics.FirstOrDefault(x => x.Title == title);
-
-            if (comic == null)
-                return false;
-
-            _comics.Remove(comic);
-
-            return true;
-        }
-
-        public void ShowComicList()
-        {
-            Console.WriteLine("Список комиксов:\n");
-
-            Console.WriteLine($"{"№",-4} {"Наименование",-35} {"Иллюстратор",-25} {"Номер",-25}");
-            Console.WriteLine(new string('-', 105));
-
-            for (int i = 0; i < _comics.Count; i++)
-            {
-                Console.WriteLine($"{i + 1,-4} {_comics[i].Title,-35} {_comics[i].Illustrator,-25} {_comics[i].Number,-25}");
-            }
+            return (type == ItemType.Book && item is Book ||
+                type == ItemType.Magazine && item is Magazine ||
+                type == ItemType.Comic && item is Comic);
         }
     }
 }

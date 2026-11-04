@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Book.cs" />
     <Compile Include="Comic.cs" />
+    <Compile Include="ILibraryItem.cs" />
     <Compile Include="Library.cs" />
     <Compile Include="Magazine.cs" />
     <Compile Include="Program.cs" />

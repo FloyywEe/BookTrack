@@ -1,6 +1,6 @@
 ﻿namespace BookTrack
 {
-    internal class Book
+    internal class Book : ILibraryItem
     {
         public string Title {  get; private set; }
         public string Author { get; private set; }
@@ -19,5 +19,9 @@
         public Book(string title, string author, int numberOfPages) 
             : this(title, author, numberOfPages, "Без жанра", "Неизвестно") { }
 
+        public string Info()
+        {
+            return $"{Title,-35} {Author,-25} {Genre,-25} {NumberOfPages,-10} {ISBN,-20}";
+        }
     }
 }
