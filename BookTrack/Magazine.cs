@@ -8,6 +8,7 @@ namespace BookTrack
         public string Title {  get; private set; }
         public int IssueNumber {  get; private set; }
         public DateTime ReleaseDate {  get; private set; }
+        public string Header { get; private set; } = $"Список журналов:\n\n{"№",-4} {"Наименование",-35} {"Номер выпуска",-25} {"Дата выхода",-10}\n" + new string('-', 90);
 
         public Magazine(string title, int issueNumber, DateTime releaseDate)
         {

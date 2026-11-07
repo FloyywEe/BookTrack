@@ -6,10 +6,9 @@ namespace BookTrack
 {
     internal class Program
     {
-        
+
         static void Main(string[] args)
         {
-            int ch;
             bool isRunning = true;
             Library library = new Library();
             LibraryGeneration(library);
@@ -18,19 +17,13 @@ namespace BookTrack
             {
                 Console.Write("1. Книги\n2. Журналы\n3. Комиксы\n4. Отсортировать всё по возрастанию" +
                     "\n5. Отсортировать всё по убыванию\n0. Выход\nВаш выбор: ");
-                try
+
+                if (!int.TryParse(Console.ReadLine(), out int ch) || ch < 0 || ch > 5)
                 {
-                    ch = Convert.ToInt32(Console.ReadLine());
-                    if (ch < 0 || ch > 5)
-                    {
-                        throw new Exception();
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Что-то пошло не так\n");
+                    Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                     continue;
                 }
+
                 switch (ch)
                 {
                     case 1:
@@ -67,24 +60,17 @@ namespace BookTrack
         {
             bool isRunnung = true;
             string title, author, genre, isbn;
-            int ch, numberOfPages, number;
             while (isRunnung)
             {
                 Console.Write("1. Добавить книгу\n2. Удалить книгу(по порядковому номеру)" +
                         "\n3. Удалить книгу(по названию)\n4. Вывести список книг\n0. Выход\nВаш выбор: ");
-                try
+
+                if (!int.TryParse(Console.ReadLine(), out int ch) || ch < 0 || ch > 4)
                 {
-                    ch = Convert.ToInt32(Console.ReadLine());
-                    if (ch < 0 || ch > 4)
-                    {
-                        throw new Exception();
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Что-то пошло не так\n");
+                    Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                     continue;
                 }
+
                 switch (ch)
                 {
                     case 1:
@@ -95,19 +81,12 @@ namespace BookTrack
                         Console.Write("Введите жанр книги: ");
                         genre = Console.ReadLine();
                         Console.Write("Введите количество страниц в книге: ");
-                        try
+                        if (!int.TryParse(Console.ReadLine(), out int numberOfPages) || numberOfPages <= 0)
                         {
-                            numberOfPages = Convert.ToInt32(Console.ReadLine());
-                            if (numberOfPages <= 0)
-                            {
-                                throw new Exception();
-                            }
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Количество страниц введено в неверном формате\n");
+                            Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                             break;
                         }
+                        
                         Console.Write("Введите ISBN книги: ");
                         isbn = Console.ReadLine();
                         library.AddItem(new Book(title, author, numberOfPages, genre, isbn));
@@ -115,28 +94,25 @@ namespace BookTrack
                         break;
                     case 2:
                         Console.Write("Введите номер книги, которую хотите удалить: ");
-                        try
+                        if (!int.TryParse(Console.ReadLine(), out int number))
                         {
-                            number = Convert.ToInt32(Console.ReadLine());
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Номер книги введен в неверном формате\n");
+                            Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                             break;
                         }
-                        Console.WriteLine(library.RemoveItem(number, Library.ItemType.Book)
+                       
+                        Console.WriteLine(library.RemoveItem<Book>(number)
                             ? "Книга успешно удалена\n"
                             : "Книгу не удалось удалить\n");
                         break;
                     case 3:
                         Console.Write("Введите название книги, которую хотите удалить: ");
                         title = Console.ReadLine();
-                        Console.WriteLine(library.RemoveItem(title, Library.ItemType.Book)
+                        Console.WriteLine(library.RemoveItem<Book>(title)
                             ? "Книга успешно удалена\n"
                             : "Книгу не удалось удалить\n");
                         break;
                     case 4:
-                        library.ShowList(Library.ItemType.Book);
+                        library.ShowList<Book>();
                         Console.WriteLine();
                         break;
                     case 0:
@@ -150,24 +126,17 @@ namespace BookTrack
             bool isRunning = true;
             string title, dateString;
             DateTime releaseDate;
-            int ch, issueNumber;
             while (isRunning)
             {
                 Console.Write("1. Добавить журнал\n2. Удалить журнал(по порядковому номеру)" +
                         "\n3. Удалить журнал(по названию)\n4. Вывести список журналов\n0. Выход\nВаш выбор: ");
-                try
+
+                if (!int.TryParse(Console.ReadLine(), out int ch) || ch < 0 || ch > 4)
                 {
-                    ch = Convert.ToInt32(Console.ReadLine());
-                    if (ch < 0 || ch > 4)
-                    {
-                        throw new Exception();
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Что-то пошло не так\n");
+                    Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                     continue;
                 }
+
                 switch (ch)
                 {
                     case 1:
@@ -175,17 +144,9 @@ namespace BookTrack
                         title = Console.ReadLine();
 
                         Console.Write("Введите номер выпуска журнала: ");
-                        try
+                        if (!int.TryParse(Console.ReadLine(), out int issueNumber) || issueNumber <= 0)
                         {
-                            issueNumber = Convert.ToInt32(Console.ReadLine());
-                            if (issueNumber <= 0)
-                            {
-                                throw new Exception();
-                            }
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Номер выпуска журнала введен в неверном формате\n");
+                            Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                             break;
                         }
 
@@ -203,28 +164,25 @@ namespace BookTrack
                         break;
                     case 2:
                         Console.Write("Введите порядковый номер журнала, который хотите удалить: ");
-                        try
+                        if (!int.TryParse(Console.ReadLine(), out int number))
                         {
-                            issueNumber = Convert.ToInt32(Console.ReadLine());
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Номер журнала введен в неверном формате\n");
+                            Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                             break;
                         }
-                        Console.WriteLine(library.RemoveItem(issueNumber, Library.ItemType.Magazine)
+                        
+                        Console.WriteLine(library.RemoveItem<Magazine>(number)
                             ? "Журнал успешно удален\n"
                             : "Журнал не удалось удалить\n");
                         break;
                     case 3:
                         Console.Write("Введите название журнала, который хотите удалить: ");
                         title = Console.ReadLine();
-                        Console.WriteLine(library.RemoveItem(title, Library.ItemType.Magazine)
+                        Console.WriteLine(library.RemoveItem<Magazine>(title)
                             ? "Журнал успешно удален\n"
                             : "Журнал не удалось удалить\n");
                         break;
                     case 4:
-                        library.ShowList(Library.ItemType.Magazine);
+                        library.ShowList<Magazine>();
                         Console.WriteLine();
                         break;
                     case 0:
@@ -238,24 +196,17 @@ namespace BookTrack
         {
             bool isRunning = true;
             string title, illustrator;
-            int ch, number;
             while (isRunning)
             {
                 Console.Write("1. Добавить комикс\n2. Удалить комикс(по порядковому номеру)" +
                         "\n3. Удалить комикс(по названию)\n4. Вывести список комиксов\n0. Выход\nВаш выбор: ");
-                try
+
+                if (!int.TryParse(Console.ReadLine(), out int ch) || ch < 0 || ch > 4)
                 {
-                    ch = Convert.ToInt32(Console.ReadLine());
-                    if (ch < 0 || ch > 4)
-                    {
-                        throw new Exception();
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Что-то пошло не так\n");
+                    Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                     continue;
                 }
+
                 switch (ch)
                 {
                     case 1:
@@ -266,17 +217,9 @@ namespace BookTrack
                         illustrator = Console.ReadLine();
 
                         Console.Write("Введите номер комикса: ");
-                        try
+                        if (!int.TryParse(Console.ReadLine(), out int number) || number <= 0)
                         {
-                            number = Convert.ToInt32(Console.ReadLine());
-                            if (number <= 0)
-                            {
-                                throw new Exception();
-                            }
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Номер комикса введен в неверном формате\n");
+                            Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                             break;
                         }
 
@@ -285,28 +228,25 @@ namespace BookTrack
                         break;
                     case 2:
                         Console.Write("Введите порядковый номер комикса который хотите удалить: ");
-                        try
+                        if (!int.TryParse(Console.ReadLine(), out int removeNumber))
                         {
-                            number = Convert.ToInt32(Console.ReadLine());
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Номер комикса введен в неверном формате\n");
+                            Console.WriteLine("Неверный ввод. Повторите попытку.\n");
                             break;
                         }
-                        Console.WriteLine(library.RemoveItem(number, Library.ItemType.Comic)
+                        
+                        Console.WriteLine(library.RemoveItem<Comic>(removeNumber)
                             ? "Комикс успешно удален\n"
                             : "Комикс не удалось удалить\n");
                         break;
                     case 3:
                         Console.Write("Введите название комикса, который хотите удалить: ");
                         title = Console.ReadLine();
-                        Console.WriteLine(library.RemoveItem(title, Library.ItemType.Comic)
+                        Console.WriteLine(library.RemoveItem<Comic>(title)
                             ? "Комикс успешно удален\n"
                             : "Комикс не удалось удалить\n");
                         break;
                     case 4:
-                        library.ShowList(Library.ItemType.Comic);
+                        library.ShowList<Comic>();
                         Console.WriteLine();
                         break;
                     case 0:

@@ -7,6 +7,7 @@
         public int NumberOfPages { get; private set; }
         public string Genre {  get; private set; }
         public string ISBN {  get; private set; }
+        public string Header { get; private set; } = $"Список книг:\n\n{"№",-4} {"Название",-35} {"Автор",-25} {"Жанр",-25} {"Страниц",-10} {"ISBN",-20}\n" + new string('-', 125);
 
         public Book(string title, string author, int numberOfPages, string genre, string iSBN)
         {
